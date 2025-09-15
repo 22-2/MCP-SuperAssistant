@@ -30,6 +30,11 @@ const getZustandPreferences = (): UserPreferences => {
     isMinimized: false,
     customInstructions: '',
     customInstructionsEnabled: false,
+    autoInsertDelay: 2,
+    autoSubmitDelay: 2,
+    autoExecuteDelay: 2,
+    aistudioSystemInstructions: '',
+    aistudioSystemInstructionsEnabled: false,
   };
 };
 
