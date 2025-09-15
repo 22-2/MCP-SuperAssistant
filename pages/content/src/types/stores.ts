@@ -68,6 +68,8 @@ export interface UserPreferences {
   isMinimized: boolean;
   customInstructions: string;
   customInstructionsEnabled: boolean;
+  aistudioSystemInstructions: string;
+  aistudioSystemInstructionsEnabled: boolean;
 }
 
 export interface Notification {

@@ -1,7 +1,7 @@
-import React from 'react';
-import { useUserPreferences } from '@src/hooks';
-import { Card, CardContent } from '@src/components/ui/card';
-import { Typography } from '../ui';
+import React, { useState, useEffect } from 'react';
+import { useUserPreferences, useCurrentAdapter } from '@src/hooks';
+import { Card, CardHeader, CardContent } from '@src/components/ui/card';
+import { Typography, Button, ToggleWithoutLabel } from '../ui';
 import { AutomationService } from '@src/services/automation.service';
 import { cn } from '@src/lib/utils';
 
@@ -14,6 +14,31 @@ const DEFAULT_DELAYS = {
 
 const Settings: React.FC = () => {
   const { preferences, updatePreferences } = useUserPreferences();
+  const { activeAdapterName } = useCurrentAdapter();
+
+  const isAIStudio = activeAdapterName === 'AIStudioAdapter';
+
+  // State for AI Studio settings
+  const [aistudioInstructions, setAistudioInstructions] = useState(preferences.aistudioSystemInstructions || '');
+  const [isEditingAIStudio, setIsEditingAIStudio] = useState(false);
+
+  useEffect(() => {
+    setAistudioInstructions(preferences.aistudioSystemInstructions || '');
+  }, [preferences.aistudioSystemInstructions]);
+
+  const handleAIStudioToggle = (enabled: boolean) => {
+    updatePreferences({ aistudioSystemInstructionsEnabled: enabled });
+  };
+
+  const handleAIStudioSave = () => {
+    updatePreferences({ aistudioSystemInstructions: aistudioInstructions });
+    setIsEditingAIStudio(false);
+  };
+
+  const handleAIStudioCancel = () => {
+    setAistudioInstructions(preferences.aistudioSystemInstructions || '');
+    setIsEditingAIStudio(false);
+  };
 
   // Handle delay input changes
   const handleDelayChange = (type: 'autoInsert' | 'autoSubmit' | 'autoExecute', value: string) => {
@@ -150,6 +175,56 @@ const Settings: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+
+      {isAIStudio && (
+        <Card className="border-slate-200 dark:border-slate-700 dark:bg-slate-800">
+          <CardHeader className="p-4">
+            <Typography variant="h4" className="text-slate-700 dark:text-slate-300">
+              AI Studio Settings
+            </Typography>
+          </CardHeader>
+          <CardContent className="p-4 pt-0">
+            <div className="space-y-4">
+              <label className="flex items-center justify-between cursor-pointer">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  Auto-set System Instructions
+                </span>
+                <ToggleWithoutLabel
+                  label="Auto-set System Instructions"
+                  checked={preferences.aistudioSystemInstructionsEnabled}
+                  onChange={handleAIStudioToggle}
+                />
+              </label>
+              <div>
+                <label htmlFor="aistudio-instructions" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  System Instructions Content
+                </label>
+                <textarea
+                  id="aistudio-instructions"
+                  value={aistudioInstructions}
+                  onChange={(e) => setAistudioInstructions(e.target.value)}
+                  onFocus={() => setIsEditingAIStudio(true)}
+                  disabled={!preferences.aistudioSystemInstructionsEnabled}
+                  placeholder="Enter system instructions for AI Studio..."
+                  className={cn(
+                    "w-full p-2 text-sm border rounded-md min-h-[120px] resize-y",
+                    "bg-white dark:bg-slate-900",
+                    "border-slate-300 dark:border-slate-600",
+                    "text-slate-900 dark:text-slate-100",
+                    !preferences.aistudioSystemInstructionsEnabled && "opacity-50 cursor-not-allowed"
+                  )}
+                />
+                {isEditingAIStudio && (
+                  <div className="flex justify-end gap-2 mt-2">
+                    <Button onClick={handleAIStudioCancel} variant="outline" size="sm">Cancel</Button>
+                    <Button onClick={handleAIStudioSave} size="sm">Save</Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

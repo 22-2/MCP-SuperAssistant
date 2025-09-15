@@ -55,6 +55,8 @@ const initialUserPreferences: UserPreferences = {
   autoInsertDelay: 2,  // Default delay in seconds
   autoExecuteDelay: 2,  // Default delay in seconds
   autoSubmitDelay: 2,   // Default delay in seconds
+  aistudioSystemInstructions: '',
+  aistudioSystemInstructionsEnabled: false,
 };
 
 const initialState: Omit<UIState, 'toggleSidebar' | 'toggleMinimize' | 'resizeSidebar' | 'setSidebarVisibility' | 'updatePreferences' | 'addNotification' | 'addRemoteNotification' | 'removeNotification' | 'dismissNotification' | 'clearNotifications' | 'openModal' | 'closeModal' | 'setGlobalLoading' | 'setTheme' | 'setMCPEnabled'> = {
